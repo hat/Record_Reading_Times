@@ -9,6 +9,8 @@ import java.util.*;
 public class Record_Reading_Times
 {
     public static int NUM_USERS = 100;
+    public static int MAIN_MENU_EXIT = 4;
+    public static int USER_MENU_EXIT = 4;
 
     public static void main(String[] args)
     {
@@ -19,7 +21,8 @@ public class Record_Reading_Times
         User[] userList = new User[NUM_USERS];
 
         //Declares int variable
-        int selection = 0;
+        int mainSelection = 0;
+        int userSelection = 0;
         int userIndex = 0;
 
         //Sets all elements of the array to a User
@@ -28,40 +31,71 @@ public class Record_Reading_Times
             userList[i] = new User();
         }
 
-        //Calls the main menu function
+        //Do loop based on menu selection (ends if mainMenu() returns MAIN_MENU_EXIT)
         do
         {
-            selection = mainMenu();
+            //Calls mainMenu() function
+            mainSelection = mainMenu();
 
-            if(selection == 1)
+            //If-Else based on mainMenu() function
+            if(mainSelection == 1)
             {
+                //Calls register function and sets userIndex to return value
                 userIndex = registerNewUser(userList, NUM_USERS);
-                selection = userMenu(userList, userIndex);
+                //Sets userSelection to 0
+                userSelection = 0;
             }
-            else if(selection == 2)
+            else if(mainSelection == 2)
             {
+                //Calls findUser function and sets userIndex to return value
                 userIndex = findUser(userList, NUM_USERS);
-                selection = userMenu(userList, userIndex);
+                //Sets userSelection to 0
+                userSelection = 0;
+            }
+            else if(mainSelection == 3)
+            {
+                displayAllUsers(userList, NUM_USERS);
+            }
+            else if(mainSelection == MAIN_MENU_EXIT)
+            {
+                //Do nothing
             }
             else
             {
-                System.out.println("SYSTEM ERROR");
+                //Prints if error in if-else
+                System.out.println("SYSTEM ERROR: CODE 1");
             }
 
-            if(selection == 1 || selection == 2)
+            //While loop runs until userMenu() returns MAIN_MENU_EXIT
+            while( userSelection != USER_MENU_EXIT && mainSelection != MAIN_MENU_EXIT )
             {
-                setTimeRead(userList, userIndex, selection);
-            }
-            else if(selection == 3)
-            {
-                displayTimeRead(userList, userIndex);
-            }
-            else
-            {
-                System.out.println("SYSTEM ERROR");
-            }
 
-        }while(selection != 3);
+                //Calls userMenu function
+                userSelection = userMenu(userList, userIndex);
+
+                //If-Else to check return value of userMenu
+                if (userSelection == 1 || userSelection == 2)
+                {
+                    //Calls setTimeRead function
+                    setTimeRead(userList, userIndex, userSelection);
+                }
+                else if (userSelection == 3)
+                {
+                    //Calls displayTimeRead function
+                    displayTimeRead(userList, userIndex);
+                }
+                else if(userSelection == USER_MENU_EXIT)
+                {
+                    //Do nothing
+                }
+                else
+                {
+                    //Prints if error in if-else
+                    System.out.println("SYSTEM ERROR: CODE 2");
+                }
+            }//End of while loop
+
+        }while(mainSelection != MAIN_MENU_EXIT);//end of While loop
 
     }
 
@@ -77,7 +111,8 @@ public class Record_Reading_Times
         System.out.println( "\tRecord Reading Times\t" +
                 "\n 1) Register New User" +
                 "\n 2) Previous User Log In" +
-                "\n 3) Exit");
+                "\n 3) Display All Users" +
+                "\n 4) Exit");
 
         //Get the input from Scanner
         selection = input.nextInt();
@@ -195,7 +230,20 @@ public class Record_Reading_Times
 
     public static void displayTimeRead(User[] userList, int userIndex)
     {
-        System.out.println("The total amount of hours that " + userList[userIndex].getName()
-                + " has read is: " + userList[userIndex].getTimeReadHours());
+        System.out.println("Total time read for " + userList[userIndex].getName()
+                + " is " + userList[userIndex].getTimeReadHours() + " hours.");
+    }
+
+    public static void displayAllUsers(User[] userList, int numUsers)
+    {
+        //Prints header
+        System.out.println( "\tCurrent Users\t" );
+
+        //For loop that runs through the users
+        for( int i = 0; i < numUsers && !userList[i].getName().equals(""); i++ )
+        {
+            //Prints name of user
+            System.out.println( userList[i].getName() );
+        }
     }
 }
